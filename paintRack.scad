@@ -1,12 +1,13 @@
-
+//------Created by Dsphar------//
 
 //User Entered Values
 wallThickness = 2;
 minDiameter = 35;
 height = 30;
 tiltDeg = 10;
-numColumns = 2;
 
+//Execute
+buildCombRect(5,5);
 
 //Calculated Values
 minRad = minDiameter/2;
@@ -16,19 +17,32 @@ rad = 2*minRad / sqrt(3);
 diam = rad*2;
 evenRowBaseOffset = (minDiam-wallThickness)*cos(tiltDeg);
 
-//Execute
-buildRow();
-buildPlate();
-    //middle
-translate([(evenRowBaseOffset+(minDiam)*sin(tiltDeg)/tan(90-tiltDeg))/2,diam-rad/2+wallThickness*cos(30),1])
-buildRow();
-    //third
-translate([0,diam+rad+wallThickness*cos(30)*2,0])
-buildRow();
-
 //modules
-module buildRow(){  
-    for(col = [0:1:numColumns-1])   
+module buildCombRect(numRows, numColumns){
+    for(col = [0:1:numColumns-1]){
+        offsetCol(col)
+        buildCol(numRows);
+    }
+}
+
+module offsetCol(colNum){
+    if (colNum%2 == 0){
+        translate([0,colNum/2*(diam+rad+wallThickness*cos(30)*2),0])
+        {
+            for(i=[0:$children-1])
+                children(i);
+        }
+    } else {
+        translate([(evenRowBaseOffset+(minDiam)*sin(tiltDeg)/tan(90-tiltDeg))/2,    colNum*(diam-rad/2+wallThickness*cos(30)),0])
+        {
+            for(i=[0:$children-1])
+            children(i);
+        }
+    }
+}
+
+module buildCol(size){  
+    for(col = [0:1:size-1])   
         shiftX(col)       
         tiltHex(tiltDeg)  
         buildHex();
