@@ -1,10 +1,10 @@
 
 
 //User Entered Values
-wallThickness = 1;
+wallThickness = 2;
 minDiameter = 35;
-tiltDeg = 30;
-height = 50;
+height = 30;
+tiltDeg = 10;
 numColumns = 2;
 
 
@@ -12,10 +12,21 @@ numColumns = 2;
 minRad = minDiameter/2;
 minRadWall = minRad+wallThickness;
 minDiam = minRadWall*2;
-Rad = 2*minRad / sqrt(3);
-Diam = Rad*2;
-evenRowBaseOffset = Rad*sin(60)+wallThickness;
+rad = 2*minRad / sqrt(3);
+diam = rad*2;
+evenRowBaseOffset = (minDiam-wallThickness)*cos(tiltDeg);
 
+//Execute
+buildRow();
+buildPlate();
+    //middle
+translate([(evenRowBaseOffset+(minDiam)*sin(tiltDeg)/tan(90-tiltDeg))/2,diam-rad/2+wallThickness*cos(30),1])
+buildRow();
+    //third
+translate([0,diam+rad+wallThickness*cos(30)*2,0])
+buildRow();
+
+//modules
 module buildRow(){  
     for(col = [0:1:numColumns-1])   
         shiftX(col)       
@@ -23,39 +34,18 @@ module buildRow(){
         buildHex();
 }
 
-module buildPlate(){
-translate([Diam ,-minRad/2-wallThickness,0])
-cube([minDiameter+wallThickness,10,wallThickness]);
-
-}
-
 module buildHex(){
     linear_extrude(height)
     translate([-minRad-wallThickness,minRad/2+wallThickness*2,0])   
     rotate(30)
     difference(){
-        circle(Rad+wallThickness, $fn=6);
-        circle(Rad, $fn=6);
+        circle(rad+wallThickness, $fn=6);
+        circle(rad, $fn=6);
     };
 }
 
-buildRow();
-buildPlate();
-
-//middle
-//translate([((inDiameter+wallThickness)*cos(tiltDeg)+(inDiameter+wallThickness)*sin(tiltDeg)/tan(90-tiltDeg))/2,0,1])
-//buildRow();
-
-//middle
-translate([(minDiam*cos(tiltDeg)+(minDiam)*sin(tiltDeg)/tan(90-tiltDeg))/2,Diam-minRadWall/2,1])
-buildRow();
-
-translate([0,Diam+minRadWall+wallThickness,0])
-buildRow();
-
 module shiftX(units){
     translate([units*((minDiameter+wallThickness)*cos(tiltDeg)+(minDiameter+wallThickness)*sin(tiltDeg)/tan(90-tiltDeg)), 0, 0])
-	//translate([units*((wallThickness+inDiameter)/cos(tiltDeg)), 0, 0])
     {
         for(i=[0:$children-1])
           children(i);
@@ -67,5 +57,11 @@ module  tiltHex(deg){
         for(i=[0:$children-1])
           children(i);
     }
+}
+
+module buildPlate(){
+translate([diam ,-minRad/2-wallThickness,0])
+cube([minDiameter+wallThickness,10,wallThickness]);
+
 }
 
