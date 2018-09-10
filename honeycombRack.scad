@@ -3,13 +3,14 @@
 //User Entered Values
 numRows = 6;
 numCols = 5;
-wallThickness = 1.25;
+wallThickness = 2;
 minDiameter = 32;
 height = 35;
 tiltDeg = 30;
 screwDiameter = 5;
 screwHoleOffset = 3;
 mountingPlates = [[2,2],[2,4],[5,3]];// [[row,col],[row,col],[row,col]]
+plateThickness = 2;
 
 //Rectangle
 buildCombRect(numRows,numCols);
@@ -85,7 +86,7 @@ module addMountingPlate(row, numRows, col,  numCols){
     translate([-minDiam*cos(tiltDeg) - (minDiam)*sin(tiltDeg)/tan(90-tiltDeg)+wallThickness/2,(minDiameter+wallThickness)*.33,0])
     difference(){
         
-        cube([minDiam*cos(tiltDeg) + (minDiam)*sin(tiltDeg)/tan(90-tiltDeg)-wallThickness/2,minRadWall+wallThickness/2,wallThickness]);
+        cube([minDiam*cos(tiltDeg) + (minDiam)*sin(tiltDeg)/tan(90-tiltDeg)-wallThickness/2,minRadWall+wallThickness/2,plateThickness]);
     
         translate([minDiam-screwHoleOffset, (minRadWall+wallThickness/2)/2, -1])
         cylinder(wallThickness+2, screwDiameter/2, screwDiameter/2+.5);
