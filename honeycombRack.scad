@@ -1,20 +1,19 @@
 //------Created by Dsphar------//
 
 //User Entered Values
+numRows = 6;
+numCols = 5;
 wallThickness = 1.25;
-minDiameter = 35;
+minDiameter = 32;
 height = 35;
 tiltDeg = 30;
 screwDiameter = 5;
-screwHoleOffset = 9;
+screwHoleOffset = 3;
+mountingPlates = [[2,2],[2,4],[5,3]];// [[row,col],[row,col],[row,col]]
 
-//Shelf Example 1, Rectangle
-numRows = 6;
-numCols = 5;
+//Rectangle
 buildCombRect(numRows,numCols);
-addMountingPlate(2, numRows, 2, numCols); //(row, numRows, col, numCols)
-addMountingPlate(2, numRows, 4, numCols); //(row, numRows, col, numCols)
-addMountingPlate(5, numRows, 3, numCols); //(row, numRows, col, numCols)
+addMountingPlates(mountingPlates);
 
 //------Hope you find it usefull, for updates, see repo below------//
 //https://github.com/Dsphar/openscad_honeycomb_shelf.git
@@ -99,6 +98,11 @@ module place(row,column){
     {
         for(i=[0:$children-1])
         children(i);
+    }  
+}
+
+module addMountingPlates(plates){
+    for(i = [0:len(plates)-1]){
+        addMountingPlate(plates[i][0],numRows,plates[i][1],numCols);
     }
-    
 }
