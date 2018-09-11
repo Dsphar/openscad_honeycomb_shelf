@@ -1,4 +1,6 @@
 //------Created by Dsphar------//
+//------Hope you find it usefull, for updates, see repo below------//
+//https://github.com/Dsphar/openscad_honeycomb_shelf.git
 
 //User Entered Values
 numRows = 6;
@@ -9,15 +11,13 @@ height = 35;
 tiltDeg = 30;
 screwDiameter = 5;
 screwHoleOffset = 3;
-mountingPlates = [[2,2],[2,4],[5,3]];// [[row,col],[row,col],[row,col]]
 plateThickness = 2;
 
 //Rectangle
 buildCombRect(numRows,numCols);
-addMountingPlates(mountingPlates);
-
-//------Hope you find it usefull, for updates, see repo below------//
-//https://github.com/Dsphar/openscad_honeycomb_shelf.git
+//addMountingPlate(2, numRows, 2, numCols); //(row, numRows, col, numCols)
+//addMountingPlate(2, numRows, 4, numCols); //(row, numRows, col, numCols)
+//addMountingPlate(5, numRows, 3, numCols); //(row, numRows, col, numCols)
 
 //Calculated Values
 minRad = minDiameter/2;
@@ -102,8 +102,34 @@ module place(row,column){
     }  
 }
 
-module addMountingPlates(plates){
+//Note: Everything below is a hack to allow Thingiverse Customizer
+//users to add plates as they wish. I do not suggest you do it this
+//way in OpenSCAD. Instead, just call addMountingPlate for every
+//plate you want to add. See lines 18-20.
+
+mountingPlatePositions = "1,3|5,3";//No spaces (row,col|row,col)
+addMountingPlates(mountingPlatePositions);
+
+module addMountingPlates(platesAsString){
+    plates = [for(i = split("|", platesAsString)) split(",", i)];
+    
     for(i = [0:len(plates)-1]){
-        addMountingPlate(plates[i][0],numRows,plates[i][1],numCols);
+        addMountingPlate(strToInt(plates[i][0]),numRows,strToInt(plates[i][1]),numCols);
     }
 }
+
+//courtesy of thingiverse.com/groups/openscad/forums/general/topic:10294
+function substr(s, st, en, p="") =
+    (st >= en || st >= len(s))
+        ? p
+        : substr(s, st+1, en, str(p, s[st]));
+function split(h, s, p=[]) =
+    let(x = search(h, s)) 
+    x == []
+        ? concat(p, s)
+        : let(i=x[0], l=substr(s, 0, i), r=substr(s, i+1, len(s)))
+                split(h, r, concat(p, l));
+
+//courtesy of thingiverse.com/thing:202724/files    
+function strToInt(str, base=10, i=0, nb=0) = (str[0] == "-") ? -1*_strToInt(str, base, 1) : _strToInt(str, base);
+function _strToInt(str, base, i=0, nb=0) = (i == len(str)) ? nb : nb+_strToInt(str, base, i+1, search(str[i],"0123456789")[0]*pow(base,len(str)-i-1));
